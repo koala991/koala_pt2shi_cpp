@@ -26,10 +26,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fun0.h">
+    <ClInclude Include="constant.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="constant.h">
+    <ClInclude Include="fun0.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

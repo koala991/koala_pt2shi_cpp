@@ -1,7 +1,12 @@
 #include <iostream>
+#include <fstream>
+#include <windows.h>
 #include <constant.h>
 #include <fun0.h>
+
 using namespace std;
+extern double INTE_BLOCK;
+extern double CRIT_VALUE;
 
 void test0() {
 	// test on switch arr 
@@ -16,13 +21,51 @@ void test0() {
 
 void test1() {
 	// test on constant set
-	extern int INTE_BLOCK;
-	cout << INTE_BLOCK << endl;
+	cout << INTE_BLOCK << "\n" << CRIT_VALUE << endl;
 }
-https://github.com/koala991/koala_pt2shi_cpp.git
+void test2()
+{// test ofstream outf
+	ofstream outf;
+	outf.open("test.txt");
+	outf << INTE_BLOCK << "\n" << CRIT_VALUE << endl;
+}
+
+void test3()
+{// test f_H
+	p_task PP{
+		2,
+		1,
+		1,
+		0,
+		0.5,
+		9,
+		1,
+		5,
+		15
+	};
+	for (int i = 0; i < 100; i++) 
+	{
+		cout << f_J(PP) << endl;
+	}
+}
+
+void test4() {
+	p_estimator PE{
+		5.294,
+		5.294,
+		0,
+		0.57,
+		9,
+		1,
+		5,
+		15
+	};
+	cout << f_pt2(PE) << endl;
+}
 
 int main()
 {
-	test1();
+	test4();
+	system("pause");
 	return 0;
 }

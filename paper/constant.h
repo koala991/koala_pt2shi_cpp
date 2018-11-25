@@ -1,6 +1,5 @@
 #pragma once
-//int INTE_BLOCK;
-struct param {
+struct p_task {
 	double p;
 	double q;
 	double r;
@@ -13,4 +12,15 @@ struct param {
 	//	double i;
 	//	double j;
 };
-typedef struct param *Param;
+typedef struct p_task *Param;
+
+struct p_estimator {
+	double c;
+	double c_star;
+	double omega;
+	double tau;
+	double lambda1;
+	double lambda2;
+	double k1;
+	double v1;
+};
