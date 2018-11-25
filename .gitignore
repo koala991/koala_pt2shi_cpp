@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# vs2016
+Debug
+Release
