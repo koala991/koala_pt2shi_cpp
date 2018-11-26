@@ -1,4 +1,3 @@
-//double INTE_BLOCK = 300;
 double CRIT_VALUE = 1e-12;
 int MAX_STEP = 1e5;
 double INF = 1e10;

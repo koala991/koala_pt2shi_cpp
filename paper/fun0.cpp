@@ -13,7 +13,6 @@ extern double param_list[12][6];
 double f_w(double lambda, double i)
 {
 	double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3 = tgamma(i + 1);
-	//p3 = i > 1 ? tgamma(i - 1) : 1;
 	return p1 * p2 / p3;
 }
 
@@ -38,31 +37,25 @@ double f_inte_0(double t, p_task P, double i, double j)
 //}
 
 double f_inte(p_task P, double i, double j)
-{	
+{
 	// int weights[INTE_BLOCK + 1];
 	// 1 4 2 4 2 ... 4 2 4 2 1
 	// INTE_BLOCK must be even
-	int p_id;
-	double y_value, sum_res = 0, weight, width;
+	int p_id, p_nums = INTE_BLOCK * 2;
+	double y_value, sum_res = 0, weight, sep;
 	if (P.tau == 0) return 0.0;
-	//if (P.r == 0 && P.alpha == 0)
-	//{
-	//	return;
-	//}
-	//if (P.r == 1 && P.alpha == 0)
-	//{
-	//	return;
-	//}
-	width = (P.tau == INF ? 1 :P.k1 * P.tau / (P.v1 + P.k1 * P.tau)) / double(INTE_BLOCK);
-	for (p_id = 0; p_id <= INTE_BLOCK; p_id++)
-	{	
-		y_value = f_inte_0(double(p_id) * width, P, i, j);
-		weight = p_id % 2 ? 4 : 2 - (p_id == 0 || p_id == INTE_BLOCK);
-		sum_res += width / 3 * weight * y_value;
+	sep = (P.tau == INF ? 1 : P.k1 * P.tau / (P.v1 + P.k1 * P.tau)) / double(p_nums);
+	for (p_id = 0; p_id <= p_nums; p_id++)
+	{
+		y_value = f_inte_0(double(p_id) * sep, P, i, j);
+		weight = p_id % 2 ? 4 : 2 - (p_id == 0 || p_id == p_nums);
+		//sum_res += sep / 6 * weight * y_value;
+		sum_res += sep * weight * y_value;
 		//cout << y_value << " - " << weight << endl;
 	}
 	return sum_res;
 }
+
 
 double f_G(p_task P, double i, double j)
 {
@@ -154,7 +147,7 @@ double f_pt2(p_estimator E)
 		PT.alpha = param_list[i][4] < 0 ? a3 : 0;
 		PT.tau = param_list[i][5] < 0 ? INF : E.tau;
 		tmp = param_list[i][0] == 0 ? f_H(PT) : f_J(PT);
-		cout << "step: " << i << ", tmp = " << tmp << ", head = " << head[i] << endl;
+		//cout << "step: " << i << ", tmp = " << tmp << ", head = " << head[i] << endl;
 		sum_res += tmp * head[i];
 	}
 	return sum_res + E.lambda1 + E.lambda2;

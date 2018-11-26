@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <constant.h>
 #include <fun0.h>
+#include <ctime>
 
 using namespace std;
 extern double INF;
@@ -95,8 +96,19 @@ void test6()
 	sr = f_pt2(PE);
 	PE.c = 0;
 	ols = f_pt2(PE);
-	printf("ols:%f\nsr:%f\nratio:%f", ols, sr, sr / ols);
+	printf("ols:%f\nsr:%f\nratio:%f\n", ols, sr, sr / ols);
 }
+
+void test7()
+{// test on speed
+	time_t t1 = time(0);
+	for (int i = 1; i < 1000; i++)
+	{
+		test6();
+	}
+	cout << "spent:" << time(0) - t1 << endl;
+}
+
 int main()
 {
 	test6();
