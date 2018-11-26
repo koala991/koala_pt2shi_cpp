@@ -5,19 +5,19 @@
 #include <fun0.h>
 
 using namespace std;
-extern double INTE_BLOCK;
+extern double INF;
 extern double CRIT_VALUE;
 
-void test0() {
-	// test on switch arr 
-	double arr[3] = { 0, 1, 2 };
-	int i = 0;
-	array_queue_on(arr, 6);
-	while (i < 3)
-	{
-		cout << arr[i++] << endl;
-	}
-}
+//void test0() {
+//	// test on switch arr 
+//	double arr[3] = { 0, 1, 2 };
+//	int i = 0;
+//	array_queue_on(arr, 6);
+//	while (i < 3)
+//	{
+//		cout << arr[i++] << endl;
+//	}
+//}
 
 void test1() {
 	// test on constant set
@@ -50,22 +50,56 @@ void test3()
 }
 
 void test4() {
+	// ols
 	p_estimator PE{
-		5.294,
-		5.294,
 		0,
-		0.57,
-		9,
+		0,
 		1,
+		10000,
+		3,
+		7,
 		5,
 		15
 	};
 	cout << f_pt2(PE) << endl;
 }
 
+void test5() {
+	// sr
+	p_estimator PE{
+		3.0/17.0,
+		0,
+		1,
+		10000,
+		1,
+		9,
+		5,
+		15
+	};
+	cout << f_pt2(PE) << endl;
+}
+
+void test6()
+{
+	double ols, sr;
+	p_estimator PE{
+	3.0 / 17.0,
+	0,
+	1,
+	10000,
+	0,
+	0,
+	5,
+	15
+	};
+	sr = f_pt2(PE);
+	PE.c = 0;
+	ols = f_pt2(PE);
+	printf("ols:%f\nsr:%f\nratio:%f", ols, sr, sr / ols);
+}
 int main()
 {
-	test4();
+	test6();
 	system("pause");
 	return 0;
 }

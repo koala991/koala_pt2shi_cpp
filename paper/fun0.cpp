@@ -5,15 +5,15 @@
 #include <fstream>
 #include <constant.h>
 using namespace std;
-extern double INTE_BLOCK;
+//extern double INTE_BLOCK;
 extern double CRIT_VALUE;
 extern double INF;
 extern int MAX_STEP;
 extern double param_list[12][6];
 double f_w(double lambda, double i)
 {
-	double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3;
-	p3 = i > 1 ? tgamma(i - 1) : 1;
+	double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3 = tgamma(i + 1);
+	//p3 = i > 1 ? tgamma(i - 1) : 1;
 	return p1 * p2 / p3;
 }
 
@@ -22,27 +22,28 @@ double f_inte_0(double t, p_task P, double i, double j)
 	double p1 = pow(t, P.k1 / 2 + i + P.p - 1);
 	double p2 = pow(1 - t, P.v1 / 2 + j - 1 + P.q);
 	double p3 = pow(t + P.alpha * (1 - t), P.r);
-	return p1 * p2 / p3;
+	return p3 ? p1 * p2 / p3 : 0;
 }
-
-double array_simp_part(double arr[]) 
-{
-	return 1.0 / 6.0*(arr[0] + arr[2] + 4 * arr[1]);
-}
-
-void array_queue_on(double arr[], double a)
-{
-	arr[0] = arr[1];
-	arr[1] = arr[2];
-	arr[2] = a;
-}
+//
+//double array_simp_part(double arr[]) 
+//{
+//	return 1.0 / 6.0*(arr[0] + arr[2] + 4 * arr[1]);
+//}
+//
+//void array_queue_on(double arr[], double a)
+//{
+//	arr[0] = arr[1];
+//	arr[1] = arr[2];
+//	arr[2] = a;
+//}
 
 double f_inte(p_task P, double i, double j)
 {	
-	int x;
-	double tmp[3];
-	double result = 0.0, part_inte;
-	double tau_star;
+	// int weights[INTE_BLOCK + 1];
+	// 1 4 2 4 2 ... 4 2 4 2 1
+	// INTE_BLOCK must be even
+	int p_id;
+	double y_value, sum_res = 0, weight, width;
 	if (P.tau == 0) return 0.0;
 	//if (P.r == 0 && P.alpha == 0)
 	//{
@@ -52,19 +53,15 @@ double f_inte(p_task P, double i, double j)
 	//{
 	//	return;
 	//}
-	tau_star = P.k1 * P.tau / (P.v1 + P.k1 * P.tau);
-	for (x = 1; x < INTE_BLOCK; x++)
+	width = (P.tau == INF ? 1 :P.k1 * P.tau / (P.v1 + P.k1 * P.tau)) / double(INTE_BLOCK);
+	for (p_id = 0; p_id <= INTE_BLOCK; p_id++)
 	{	
-		part_inte = f_inte_0(double(x) / double(INTE_BLOCK) * tau_star, P, i, j);
-		if (x < 3)
-		{
-			tmp[x] = part_inte;
-		} else {
-			array_queue_on(tmp, part_inte);
-			result += double(2) / double(INTE_BLOCK) * array_simp_part(tmp);
-		}
+		y_value = f_inte_0(double(p_id) * width, P, i, j);
+		weight = p_id % 2 ? 4 : 2 - (p_id == 0 || p_id == INTE_BLOCK);
+		sum_res += width / 3 * weight * y_value;
+		//cout << y_value << " - " << weight << endl;
 	}
-	return result;
+	return sum_res;
 }
 
 double f_G(p_task P, double i, double j)
@@ -80,58 +77,45 @@ double f_H(p_task P)
 {
 	//assert pow(2, P.p + P.q - P.r)==2
 	int i = 0, j = 0;
-	double tmp, tmpi = 0, tmpj, sum_res = 0;
-	while (i < MAX_STEP) 
+	double tmp = 0, tmpi = 0, tmpj = 0, tmps = 0, sum_res = 0;
+	while (i < MAX_STEP)
 	{
 		tmpj = 0;
 		for (j = 0; j < MAX_STEP; j++) 
 		{
 			tmp = f_w(P.lambda1, i) * f_w(P.lambda2, j) * f_G(P, i, j);
-			if (j == 0)
-			{
-				if (tmp <= CRIT_VALUE && tmp <= tmpi)
-				{
-					i = MAX_STEP;
-					break;
-				}
-				tmpi = tmp;
-			}
 			if (tmp <= CRIT_VALUE && tmp <= tmpj) break;
 			tmpj = tmp;
 			sum_res += tmp;
 		}
-		//cout << "setp:" << i << ", res = " << sum_res << endl;
+		//cout << "setp:" << i << ", res = " << sum_res - tmps << endl;
+		if (sum_res - tmps < CRIT_VALUE && sum_res - tmps < tmpi) break;
+		tmpi = sum_res - tmps;
+		tmps = sum_res;
 		i++;
 	}
 	return 2 * sum_res;
 }
-
-
+// f_H and f_G can be reduce to one
 
 double f_J(p_task P)
 {
 	int i = 0, j = 0;
-	double tmp, tmpi = 0, tmpj, sum_res = 0;
+	double tmp = 0, tmpi = 0, tmpj = 0, tmps = 0, sum_res = 0;
 	while (i < MAX_STEP)
 	{
 		tmpj = 0;
 		for (j = 0; j < MAX_STEP; j++)
 		{
 			tmp = f_w(P.lambda1, i) * f_w(P.lambda2, j) * f_G(P, i + 1, j);
-			if (j == 0)
-			{
-				if (tmp <= CRIT_VALUE && tmp <= tmpi)
-				{
-					i = MAX_STEP;
-					break;
-				}
-				tmpi = tmp;
-			}
 			if (tmp <= CRIT_VALUE && tmp <= tmpj) break;
 			tmpj = tmp;
 			sum_res += tmp;
 		}
-		//cout << "setp:" << i << ", res = " << sum_res << endl;
+		//cout << "setp:" << i << ", res = " << sum_res - tmps << endl;
+		if (sum_res - tmps < CRIT_VALUE && sum_res - tmps < tmpi) break;
+		tmpi = sum_res - tmps;
+		tmps = sum_res;
 		i++;
 	}
 	return P.lambda1 * sum_res;

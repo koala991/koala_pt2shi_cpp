@@ -1,4 +1,5 @@
 #pragma once
+#define INTE_BLOCK 500
 struct p_task {
 	double p;
 	double q;

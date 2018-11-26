@@ -1,6 +1,6 @@
-double INTE_BLOCK = 300;
+//double INTE_BLOCK = 300;
 double CRIT_VALUE = 1e-12;
-int MAX_STEP = 500;
+int MAX_STEP = 1e5;
 double INF = 1e10;
 double param_list[12][6] =
 {
@@ -11,8 +11,8 @@ double param_list[12][6] =
 	{0,0,2,1,-1,0},
 	{0,1,0,0,0,-1},
 	{0,0,1,0,0,-1},
-	{0,0.0,2,1,0,-1},
-	{1,0.0,1,1,0,0},
+	{0,0,2,1,0,-1},
+	{1,0,1,1,0,0},
 	{1,0,1,1,-1,0},
 	{1,0,0,0,0,-1},
 	{1,0,1,1,0,-1}
