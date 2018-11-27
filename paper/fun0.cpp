@@ -2,10 +2,8 @@
 #include <algorithm>
 #include <math.h>
 #include <cstdlib>
-#include <fstream>
 #include <constant.h>
 using namespace std;
-//extern double INTE_BLOCK;
 extern double CRIT_VALUE;
 extern double INF;
 extern int MAX_STEP;
@@ -16,11 +14,11 @@ double f_w(double lambda, double i)
 	return p1 * p2 / p3;
 }
 
-double f_inte_0(double t, p_task P, double i, double j)
+double f_inte_0(double t, p_task *P, double i, double j)
 {
-	double p1 = pow(t, P.k1 / 2 + i + P.p - 1);
-	double p2 = pow(1 - t, P.v1 / 2 + j - 1 + P.q);
-	double p3 = pow(t + P.alpha * (1 - t), P.r);
+	double p1 = pow(t, P->k1 / 2 + i + P->p - 1);
+	double p2 = pow(1 - t, P->v1 / 2 + j - 1 + P->q);
+	double p3 = pow(t + P->alpha * (1 - t), P->r);
 	return p3 ? p1 * p2 / p3 : 0;
 }
 //
@@ -36,37 +34,37 @@ double f_inte_0(double t, p_task P, double i, double j)
 //	arr[2] = a;
 //}
 
-double f_inte(p_task P, double i, double j)
+double f_inte(p_task *P, double i, double j)
 {
 	// int weights[INTE_BLOCK + 1];
 	// 1 4 2 4 2 ... 4 2 4 2 1
 	// INTE_BLOCK must be even
 	int p_id, p_nums = INTE_BLOCK * 2;
 	double y_value, sum_res = 0, weight, sep;
-	if (P.tau == 0) return 0.0;
-	sep = (P.tau == INF ? 1 : P.k1 * P.tau / (P.v1 + P.k1 * P.tau)) / double(p_nums);
+	if (P->tau == 0) return 0.0;
+	sep = (P->tau == INF ? 1 : P->k1 * P->tau / (P->v1 + P->k1 * P->tau)) / double(p_nums);
 	for (p_id = 0; p_id <= p_nums; p_id++)
 	{
 		y_value = f_inte_0(double(p_id) * sep, P, i, j);
 		weight = p_id % 2 ? 4 : 2 - (p_id == 0 || p_id == p_nums);
 		//sum_res += sep / 6 * weight * y_value;
-		sum_res += sep * weight * y_value;
+		sum_res += sep / 3 * weight * y_value;
 		//cout << y_value << " - " << weight << endl;
 	}
 	return sum_res;
 }
 
 
-double f_G(p_task P, double i, double j)
+double f_G(p_task *P, double i, double j)
 {
 	double g1, g2;
-	g1 = tgamma((P.k1 + P.v1)/ 2 + i + j + P.p + P.q - P.r) /
-		tgamma(P.k1 / 2 + i) / tgamma(P.v1 / 2 + j);
+	g1 = tgamma((P->k1 + P->v1)/ 2 + i + j + P->p + P->q - P->r) /
+		tgamma(P->k1 / 2 + i) / tgamma(P->v1 / 2 + j);
 	g2 = f_inte(P, i, j);
 	return g1 * g2;
 }
 
-double f_H(p_task P)
+double f_HJ(p_task *P, int type)
 {
 	//assert pow(2, P.p + P.q - P.r)==2
 	int i = 0, j = 0;
@@ -76,7 +74,7 @@ double f_H(p_task P)
 		tmpj = 0;
 		for (j = 0; j < MAX_STEP; j++) 
 		{
-			tmp = f_w(P.lambda1, i) * f_w(P.lambda2, j) * f_G(P, i, j);
+			tmp = f_w(P->lambda1, i) * f_w(P->lambda2, j) * f_G(P, i + type, j);
 			if (tmp <= CRIT_VALUE && tmp <= tmpj) break;
 			tmpj = tmp;
 			sum_res += tmp;
@@ -87,31 +85,7 @@ double f_H(p_task P)
 		tmps = sum_res;
 		i++;
 	}
-	return 2 * sum_res;
-}
-// f_H and f_G can be reduce to one
-
-double f_J(p_task P)
-{
-	int i = 0, j = 0;
-	double tmp = 0, tmpi = 0, tmpj = 0, tmps = 0, sum_res = 0;
-	while (i < MAX_STEP)
-	{
-		tmpj = 0;
-		for (j = 0; j < MAX_STEP; j++)
-		{
-			tmp = f_w(P.lambda1, i) * f_w(P.lambda2, j) * f_G(P, i + 1, j);
-			if (tmp <= CRIT_VALUE && tmp <= tmpj) break;
-			tmpj = tmp;
-			sum_res += tmp;
-		}
-		//cout << "setp:" << i << ", res = " << sum_res - tmps << endl;
-		if (sum_res - tmps < CRIT_VALUE && sum_res - tmps < tmpi) break;
-		tmpi = sum_res - tmps;
-		tmps = sum_res;
-		i++;
-	}
-	return P.lambda1 * sum_res;
+	return sum_res * (type? P->lambda1: 2);
 }
 
 double f_pt2(p_estimator E)
@@ -146,7 +120,7 @@ double f_pt2(p_estimator E)
 		PT.r = param_list[i][3];
 		PT.alpha = param_list[i][4] < 0 ? a3 : 0;
 		PT.tau = param_list[i][5] < 0 ? INF : E.tau;
-		tmp = param_list[i][0] == 0 ? f_H(PT) : f_J(PT);
+		tmp = f_HJ(&PT, (int)param_list[i][0]);
 		//cout << "step: " << i << ", tmp = " << tmp << ", head = " << head[i] << endl;
 		sum_res += tmp * head[i];
 	}

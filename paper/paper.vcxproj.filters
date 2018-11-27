@@ -24,6 +24,9 @@
     <ClCompile Include="constant.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="do_task_mul.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constant.h">
@@ -32,5 +35,14 @@
     <ClInclude Include="fun0.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="do_task.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="do_task_mul.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 double CRIT_VALUE = 1e-12;
-int MAX_STEP = 1e5;
+int MAX_STEP = 10000;
 double INF = 1e10;
 double param_list[12][6] =
 {
