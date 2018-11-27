@@ -1,24 +1,14 @@
 #include <iostream>
 #include <fstream>
 #include <windows.h>
+#include <ctime>
 #include <constant.h>
 #include <fun0.h>
-#include <ctime>
+#include <do_task_mul.h>
 
 using namespace std;
 extern double INF;
 extern double CRIT_VALUE;
-
-//void test0() {
-//	// test on switch arr 
-//	double arr[3] = { 0, 1, 2 };
-//	int i = 0;
-//	array_queue_on(arr, 6);
-//	while (i < 3)
-//	{
-//		cout << arr[i++] << endl;
-//	}
-//}
 
 void test1() {
 	// test on constant set
@@ -171,88 +161,48 @@ void test11()
 	delete h; //回收子线程资源
 }
 
-void tmp(p_mul *pp)
+void test11(double arr[]) 
 {
-	pp->tag = 'x';
-}
-
-
-struct arr_p {
-	int cols;
-	int rows;
-	int *task_id;
-	char *arr;
-};
-
-HANDLE hmutex;
-
-void arr_test_a(arr_p *ppp)
-{
-	while (true)
+	for (int i = 0; i < 7; i++)
 	{
-		WaitForSingleObject(hmutex, INFINITE);
-		if (*ppp->task_id >= ppp->cols*ppp->rows) break;
-		//*(ppp->arr + *(ppp->task_id)) = *(ppp->task_id) + 1;
-		*(ppp->task_id) = *(ppp->task_id) + 1;
-		*(ppp->arr + *(ppp->task_id)-1) = 'a';
-		Sleep(10);
-		ReleaseMutex(hmutex);
-	}
-}
-void arr_test_b(arr_p *ppp)
-{
-	while (true)
-	{
-		WaitForSingleObject(hmutex, INFINITE);
-		if (*ppp->task_id >= ppp->cols*ppp->rows) break;
-		//*(ppp->arr + *(ppp->task_id)) = *(ppp->task_id) + 1;
-		*(ppp->task_id) = *(ppp->task_id) + 1;
-		*(ppp->arr + *(ppp->task_id)-1) = 'b';
-		Sleep(10);
-		ReleaseMutex(hmutex);
-	}
-}
-void arr_test_c(arr_p *ppp)
-{
-	while (true)
-	{
-		WaitForSingleObject(hmutex, INFINITE);
-		if (*ppp->task_id >= ppp->cols*ppp->rows) break;
-		//*(ppp->arr + *(ppp->task_id)) = *(ppp->task_id) + 1;
-		*(ppp->task_id) = *(ppp->task_id) + 1;
-		*(ppp->arr + *(ppp->task_id)-1) = 'c';
-		Sleep(10);
-		ReleaseMutex(hmutex);
+		cout << arr[i] << endl;
 	}
 }
 
+void test12()
+{// test on eval_mse_table
+	double lambda[] = { 0,1,2,4,6,8,10,15,30,50,100,-1};
+	double r2[] = { 0.1,0.3,0.5,0.7,0.9,1.0,-1};
+	p_estimator PE{
+		3.0 / 17.0,
+		0,
+		1,
+		INF,
+		0,
+		0,
+		5,
+		15
+	};
+	double *arr = eval_mse_table(PE, 's', lambda, r2);
+	for (int tag = 0; tag < 66; tag++)
+	{
+		cout << *(arr + tag);
+		if ((tag+1) % 6) 
+		{
+			cout << " ";
+		}
+		else 
+		{
+			cout << "\n";
+		}
+	}
+	cout << endl;
+}
 int main()
-{
-	arr_p * pp = new arr_p();
-	pp->cols = 5;
-	pp->rows = 12;
-	char arr[12][5];
-	int task_id = 0;
-	pp->task_id = &task_id;
-	pp->arr = arr[0];
-	hmutex = CreateMutex(NULL, FALSE, NULL);
-	HANDLE h1 = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)arr_test_a, pp, 1, 0);
-	ResumeThread(h1);
-	CloseHandle(h1);
-	//HANDLE h2 = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)arr_test_b, pp, 1, 0);
-	//ResumeThread(h2);
-	//CloseHandle(h2);
-	HANDLE h3 = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)arr_test_c, pp, 1, 0);
-	ResumeThread(h3);
-	CloseHandle(h3);
-	while (task_id < 60)
-	{
-		Sleep(500);
-	}
-	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 5; j++)	cout << arr[i][j] << " ";
-		cout << '\n';
-	}
+{	
+	time_t t1 = time(0);
+	test12();
+	cout << "spent:" << time(0) - t1 << endl;
 	system("pause");
 	return 0;
 }
