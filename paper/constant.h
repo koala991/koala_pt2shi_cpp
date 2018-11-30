@@ -1,27 +1,47 @@
 #pragma once
-#define INTE_BLOCK 200
-struct p_task {
-	double p;
-	double q;
-	double r;
-	double alpha;
-	double tau;
-	double lambda1;
-	double lambda2;
-	double k1;
-	double v1;
-	//	double i;
-	//	double j;
+constexpr auto INTE_BLOCK = 50;
+constexpr auto MAX_STEP = 500;
+constexpr auto MAX_LAMBDA = 100;
+constexpr auto MAX_TAU = 100;
+constexpr auto CRIT_REGRET = 1e-6;
+constexpr auto CRIT_LAMBDA = 1e-2;
+constexpr auto CRIT_TAU = 1e-6;
+constexpr auto CRIT_VALUE = 1e-12;
+constexpr auto INF = 1e10;
+constexpr double PARAM_LIST[12][6] =
+{
+	{0,0,2,1,0,0},
+	{0,1,2,2,-1,0},
+	{0,0,1,0,0,0},
+	{0,1,1,1,-1,0},
+	{0,0,2,1,-1,0},
+	{0,1,0,0,0,-1},
+	{0,0,1,0,0,-1},
+	{0,0,2,1,0,-1},
+	{1,0,1,1,0,0},
+	{1,0,1,1,-1,0},
+	{1,0,0,0,0,-1},
+	{1,0,1,1,0,-1}
 };
-typedef struct p_task *Param;
+struct TASK_PARAM {
+	double m_dP;
+	double m_dQ;
+	double m_dR;
+	double m_dAlpha;
+	double m_dTau;
+	double m_dLambda1;
+	double m_dLambda2;
+	double m_dK1;
+	double m_dV1;
+};
 
-struct p_estimator {
-	double c;
-	double c_star;
-	double omega;
-	double tau;
-	double lambda1;
-	double lambda2;
-	double k1;
-	double v1;
+struct ESTIMATOR_PARAM {
+	double m_dC;
+	double m_dCStar;
+	double m_dOmega;
+	double m_dTau;
+	double m_dLambda;
+	double m_dR2;
+	double m_dK1;
+	double m_dV1;
 };

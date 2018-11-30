@@ -15,30 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MultiTask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseFun.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="fun0.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="constant.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="do_task_mul.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constant.h">
+    <ClInclude Include="MultiTask.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="fun0.h">
+    <ClInclude Include="BaseFun.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="do_task.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="do_task_mul.h">
+    <ClInclude Include="Constant.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
