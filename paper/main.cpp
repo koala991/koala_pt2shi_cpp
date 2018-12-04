@@ -18,7 +18,7 @@
 //	0,
 //	0,
 //	5,
-//	15
+//	20
 //	};
 //	double nTime = 0;
 //	LARGE_INTEGER nFreq;

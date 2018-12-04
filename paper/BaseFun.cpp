@@ -62,7 +62,7 @@ double FunHJ(TASK_PARAM *P, int type)
 			tmpj = tmp;
 			sum_res += tmp;
 		}
-		//cout << "setp:" << i << ", res = " << sum_res - tmps << endl;
+		//cout << "Setp:" << i << ", res = " << sum_res - tmps << endl;
 		if (sum_res - tmps < CRIT_VALUE && sum_res - tmps <= tmpi) break;
 		tmpi = sum_res - tmps;
 		tmps = sum_res;
@@ -75,7 +75,8 @@ double FunHJ(TASK_PARAM *P, int type)
 double FunPT2(ESTIMATOR_PARAM E)
 {
 	double a, a1, a2, a3, sum_res = 0, tmp;
-	a = (E.m_dK1 - 2) / (E.m_dV1 + 2);
+	a = (E.m_dK1 - 2) / (E.m_dN - E.m_dK1 + 2);
+	//a = 0;//OLS
 	a1 = E.m_dC * E.m_dOmega;
 	a2 = E.m_dC - a1;
 	a3 = E.m_dCStar;
@@ -97,7 +98,7 @@ double FunPT2(ESTIMATOR_PARAM E)
 	PT.m_dLambda1 = E.m_dLambda * E.m_dR2;
 	PT.m_dLambda2 = E.m_dLambda - PT.m_dLambda1;
 	PT.m_dK1 = E.m_dK1;
-	PT.m_dV1 = E.m_dV1;
+	PT.m_dV1 = E.m_dN - E.m_dK1;
 	for (int i = 0; i < 12; i++) {
 		PT.m_dP = PARAM_LIST[i][1];
 		PT.m_dQ = PARAM_LIST[i][2];

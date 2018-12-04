@@ -1,13 +1,16 @@
 #pragma once
-constexpr auto INTE_BLOCK = 50;
+constexpr auto INTE_BLOCK = 500;
 constexpr auto MAX_STEP = 500;
 constexpr auto MAX_LAMBDA = 100;
-constexpr auto MAX_TAU = 100;
-constexpr auto CRIT_REGRET = 1e-6;
-constexpr auto CRIT_LAMBDA = 1e-2;
-constexpr auto CRIT_TAU = 1e-6;
+constexpr auto MAX_TAU = 50;
+constexpr auto CRIT_REGRET = 1e-4;
+constexpr auto CRIT_LAMBDA = 1e-6;
+constexpr auto CRIT_TAU = 1e-4;
 constexpr auto CRIT_VALUE = 1e-12;
 constexpr auto INF = 1e10;
+constexpr auto LEAST_CHANGE_RATE = 0.25;
+constexpr auto VERBOSE = false;
+constexpr auto RESULT_PATH = "F:/W/paper/result/tmp.csv";
 constexpr double PARAM_LIST[12][6] =
 {
 	{0,0,2,1,0,0},
@@ -43,5 +46,5 @@ struct ESTIMATOR_PARAM {
 	double m_dLambda;
 	double m_dR2;
 	double m_dK1;
-	double m_dV1;
+	double m_dN;
 };
