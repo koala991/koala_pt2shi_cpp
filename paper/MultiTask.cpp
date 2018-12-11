@@ -223,9 +223,11 @@ double GetMaxRegret(ESTIMATOR_PARAM *pE, int nType)
 		//cout << "Range of MaxRegret is [" << dRangeY[0] << "," << dRangeY[1] << "]\n";
 	}
 	pE->m_dLambda = (dRangeX[0] + dRangeX[1]) / 2, dFourY[0] = GetRegret(pE, nType);
-	cout << "Tau: " << fixed << setprecision(6) << pE->m_dTau << "\tType: " << (nType ? "INF" : "0  ") << "\tTurns: " << nStep;
-	cout << "\tLambda: [" << dRangeX[0] << "," << dRangeX[1] << "]";
-	cout << "\tMaxRegret: " << dFourY[0] <<"\n";
+	if (VERBOSE) {
+		cout << "Tau: " << fixed << setprecision(6) << pE->m_dTau << "\tType: " << (nType ? "INF" : "0  ") << "\tTurns: " << nStep;
+		cout << "\tLambda: [" << dRangeX[0] << "," << dRangeX[1] << "]";
+		cout << "\tMaxRegret: " << dFourY[0] << "\n";
+	}
 	return dFourY[0];
 }
 
@@ -285,12 +287,16 @@ double GetMinmaxTau(ESTIMATOR_PARAM *pE)
 		//dTmpX = dRangeX[0] + (dRangeX[1] - dRangeX[0]) * min(max((dRangeY[1] - dTmpDiff) / (dRangeY[1] - dRangeY[0]), LEAST_CHANGE_RATE), 1 - LEAST_CHANGE_RATE);
 		dTmpX = dRangeX[0] + (dRangeX[1] - dRangeX[0]) / 2;
 		nStep++;
-		cout << "Turns: " << nStep;
+		if (VERBOSE) {
+			cout << "Turns: " << nStep;
+			cout << "\tTau: [" << dRangeX[0] << ", " << dRangeX[1] << "]";
+			cout << "\tRegretDiff: [" << dRangeY[0] << ", " << dRangeY[1] << "]" << endl;		
+		}
+	}
+	if (VERBOSE) {
+		cout << "[BREAK]  Turns: " << nStep;
 		cout << "\tTau: [" << dRangeX[0] << ", " << dRangeX[1] << "]";
 		cout << "\tRegretDiff: [" << dRangeY[0] << ", " << dRangeY[1] << "]" << endl;
 	}
-	cout << "[BREAK]  Turns: " << nStep;
-	cout << "\tTau: [" << dRangeX[0] << ", " << dRangeX[1] << "]";
-	cout << "\tRegretDiff: [" << dRangeY[0] << ", " << dRangeY[1] << "]" << endl;
 	return (dRangeX[0] + (dRangeX[1] - dRangeX[0]) / 2);
 }
