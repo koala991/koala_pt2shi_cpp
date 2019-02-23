@@ -189,16 +189,22 @@ void DoRegretTask(MULTI_REGRET_PARAM *pMDP)
 
 double GetMaxRegret(ESTIMATOR_PARAM *pE, int nType)
 {	
-	double dRangeX[2] = { 0, MAX_LAMBDA };
+
+	double min_lambda, max_lambda;
+	double dRangeX[2];
 	double dRangeY[2];
 	double dFourX[4], dFourY[4];
 	double dMaxRegret = 0, dTmpMax = -1;
 	bool bInc[3];
 	int nInd, nSignal = 0, nStep = 0;
+	min_lambda = nType ? MIN_LAMBDA_1 : MIN_LAMBDA_0;
+	max_lambda = nType ? MAX_LAMBDA_1 : MAX_LAMBDA_0;
+	dRangeX[0] = min_lambda;
+	dRangeX[1] = max_lambda;
 	/*MULTI_REGRET_PARAM MRP;
 	ESTIMATOR_PARAM NE = *pE;*/
 	pE->m_dLambda = 0; dRangeY[0] = GetRegret(pE, nType);
-	pE->m_dLambda = MAX_LAMBDA; dRangeY[1] = GetRegret(pE, nType);
+	pE->m_dLambda = max_lambda; dRangeY[1] = GetRegret(pE, nType);
 	while (abs(dRangeX[0] - dRangeX[1]) > CRIT_LAMBDA && nStep < MAX_STEP)
 	{
 		for (int i = 0; i < 4; i++) dFourX[i] = double(3 - i)*dRangeX[0] / 3 + double(i)*dRangeX[1] / 3;
@@ -219,8 +225,8 @@ double GetMaxRegret(ESTIMATOR_PARAM *pE, int nType)
 		for (nInd = 0; nInd < 3 && bInc[nInd];nInd++);
 		dRangeX[1] = dFourX[min(nInd + 1, 3)], dRangeY[1] = dFourY[min(nInd + 1, 3)];
 		nStep++;
-		//cout << "Range of Lambda is [" << dRangeX[0] << "," << dRangeX[1] << "]\n";
-		//cout << "Range of MaxRegret is [" << dRangeY[0] << "," << dRangeY[1] << "]\n";
+		cout << "Range of Lambda is [" << dRangeX[0] << "," << dRangeX[1] << "]\n";
+		cout << "Range of MaxRegret is [" << dRangeY[0] << "," << dRangeY[1] << "]\n";
 	}
 	pE->m_dLambda = (dRangeX[0] + dRangeX[1]) / 2, dFourY[0] = GetRegret(pE, nType);
 	if (VERBOSE) {
@@ -259,7 +265,7 @@ inline double GetRegretDiff(ESTIMATOR_PARAM *pE)
 
 double GetMinmaxTau(ESTIMATOR_PARAM *pE)
 {
-	double dRangeX[2] = { 0, MAX_TAU };
+	double dRangeX[2] = { MIN_TAU, MAX_TAU };
 	double dRangeY[2];
 	double dTmpDiff = 0, dTmpX = MAX_TAU / 2;
 	int nInd, nStep = 0;

@@ -54,7 +54,7 @@ int GetMinimaxTuaTask()
 	// Set n,k,dR2,a1,a2,a3
 	k = 5;
 	n = 20;
-	dR2 = 1.0;
+	dR2 = 0.3;
 	a = (k - 2) / (n - k + 2);
 	a1 = 0 * a;
 	a2 = 30 * a;
@@ -90,9 +90,18 @@ int main()
 	QueryPerformanceFrequency(&nFreq);
 	QueryPerformanceCounter(&nBeginTime);
 	GetMinimaxTuaTask();
+	//GetRMSETask();
 	QueryPerformanceCounter(&nEndTime);
 	nTime = (double)(nEndTime.QuadPart - nBeginTime.QuadPart) / (double)nFreq.QuadPart;
 	cout << "Spent: " << nTime * 1000 << "ms" << endl; 
 	system("pause");
 	return 0;
 }
+
+//
+//int main()
+//{
+//	cout << exp(-INF) << endl;
+//	system("pause");
+//	return 0;
+//}

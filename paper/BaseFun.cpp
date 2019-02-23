@@ -1,13 +1,41 @@
 #include <iostream>
 #include <algorithm>
 #include <math.h>
+#include <cmath>
 #include <cstdlib>
 #include "Constant.h"
 using namespace std;
+
+double lgamma(double n)
+{
+	double oput = 0;
+	while (n > 2) oput += log(--n);
+	oput += log(tgamma(n));
+	return oput;
+}
+
 double FunW(double lambda, double i)
 {
-	double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3 = tgamma(i + 1);
-	return p2 / p3 * p1;
+	//double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3 = tgamma(i + 1);
+	//return p2 / p3 * p1;
+	double lp1, lp2, lp3 = 0, res;
+	lp1 = -lambda / 2;
+	lp2 = lambda ? i * log(lambda / 2) : 0;
+	for (double j = i; j > 0; j--) lp3 += log(j);
+	res = exp(lp1 + lp2 - lp3);
+	return lambda ? res : 1-int(bool(i));
+}
+
+double LFunW(double lambda, double i)
+{
+	//double p1 = exp(-lambda / 2), p2 = pow(lambda / 2, i), p3 = tgamma(i + 1);
+	//return p2 / p3 * p1;
+	double lp1, lp2, lp3 = 0, res;
+	lp1 = -lambda / 2;
+	lp2 = lambda ? i * log(lambda / 2) : 0;
+	for (double j = i; j > 0; j--) lp3 += log(j);
+	res = lp1 + lp2 - lp3;
+	return lambda ? res : (i? -INF : 0);
 }
 
 inline double FunInteBase(double t, TASK_PARAM *P, double i, double j)
@@ -37,27 +65,37 @@ double FunInte(TASK_PARAM *P, double i, double j)
 	return sum_res;
 }
 
-
 double FunG(TASK_PARAM *pT, double i, double j)
 {
-	double g1, g2;
-	g1 = tgamma((pT->m_dK1 + pT->m_dV1)/ 2 + i + j + pT->m_dP + pT->m_dQ - pT->m_dR) /
-		tgamma(pT->m_dK1 / 2 + i) / tgamma(pT->m_dV1 / 2 + j);
+	double lg1, g2;
+	lg1 = lgamma((pT->m_dK1 + pT->m_dV1)/ 2 + i + j + pT->m_dP + pT->m_dQ - pT->m_dR) -
+		lgamma(pT->m_dK1 / 2 + i) - lgamma(pT->m_dV1 / 2 + j);
 	g2 = FunInte(pT, i, j);
-	return g1 * g2;
+	return lg1<=700 ? exp(lg1) * g2 : 0;
+}
+
+double LFunG(TASK_PARAM *pT, double i, double j)
+{
+	double lg1, g2;
+	lg1 = lgamma((pT->m_dK1 + pT->m_dV1) / 2 + i + j + pT->m_dP + pT->m_dQ - pT->m_dR) -
+		lgamma(pT->m_dK1 / 2 + i) - lgamma(pT->m_dV1 / 2 + j);
+	g2 = FunInte(pT, i, j);
+	return lg1 + log(g2);
 }
 
 double FunHJ(TASK_PARAM *P, int type)
 {
 	//assert pow(2, P.p + P.q - P.r)==2
 	int i = 0, j = 0;
-	double tmp = 0, tmpi = 0, tmpj = 0, tmps = 0, sum_res = 0;
+	double ltmp, tmp = 0, tmpi = 0, tmpj = 0, tmps = 0, sum_res = 0;
 	while (i < MAX_STEP)
 	{
 		tmpj = 0;
 		for (j = 0; j < MAX_STEP; j++) 
 		{
 			tmp = FunW(P->m_dLambda1, i) * FunW(P->m_dLambda2, j) * FunG(P, i + type, j);
+			ltmp = LFunW(P->m_dLambda1, i) + LFunW(P->m_dLambda2, j) + LFunG(P, i + type, j);
+			tmp = ltmp < -INF ? 0 : exp(ltmp);
 			if (tmp <= CRIT_VALUE && tmp <= tmpj) break;
 			tmpj = tmp;
 			sum_res += tmp;
@@ -68,7 +106,7 @@ double FunHJ(TASK_PARAM *P, int type)
 		tmps = sum_res;
 		i++;
 	}
-	if (i == MAX_STEP || j == MAX_STEP) cout << "Warn: Reach MAX_STEP" << endl;
+	if (i == MAX_STEP || j == MAX_STEP) cout << "Warn: Reach MAX_STEP, i="<<i <<", j="<< j << endl;
 	return sum_res * (type? P->m_dLambda1: 2);
 }
 

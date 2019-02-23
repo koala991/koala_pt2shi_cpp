@@ -1,10 +1,16 @@
 #pragma once
-constexpr auto INTE_BLOCK = 500;
+constexpr auto INTE_BLOCK = 30;
 constexpr auto MAX_STEP = 500;
-constexpr auto MAX_LAMBDA = 50;
-constexpr auto MAX_TAU = 50;
-constexpr auto CRIT_REGRET = 1e-4;
-constexpr auto CRIT_LAMBDA = 1e-6;
+constexpr auto MAX_LAMBDA_0 = 500;
+constexpr auto MIN_LAMBDA_0 = 0;
+constexpr auto MAX_LAMBDA_1 = 500;
+constexpr auto MIN_LAMBDA_1 = 0;
+//constexpr auto MAX_TAU = 3;
+//constexpr auto MIN_TAU = 0;
+constexpr auto MAX_TAU = 3.250;
+constexpr auto MIN_TAU = 0;//1.427815  1.523438 1.618652 1.218750
+constexpr auto CRIT_REGRET = 1e-3;
+constexpr auto CRIT_LAMBDA = 1e-3;
 constexpr auto CRIT_TAU = 1e-4;
 constexpr auto CRIT_VALUE = 1e-12;
 constexpr auto INF = 1e10;
